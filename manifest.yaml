@@ -66,7 +66,7 @@ spec:
   - host: ai.server05.my.id
     http:
       paths:
-      - path: /
+      - path: /*
         pathType: Prefix
         backend:
           service:
