@@ -1,0 +1,6 @@
+.env
+.gitignore
+manifest.yml
+secret.yaml
+pyvenv.cfg
+chatbot.cpython-313.pyc

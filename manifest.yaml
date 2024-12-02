@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ai-chatbot
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-chatbot
+  namespace: ai-chatbot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-chatbot
+  template:
+    metadata:
+      labels:
+        app: ai-chatbot
+    spec:
+      containers:
+      - name: ai-chatbot
+        image: your-docker-image:latest
+        ports:
+        - containerPort: 7860
+        env:
+        - name: TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: ai-chatbot-secret
+              key: TOKEN
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-chatbot-service
+  namespace: ai-chatbot
+spec:
+  selector:
+    app: ai-chatbot
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 7860
+  type: ClusterIP
+
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ai-chatbot-ingress
+  namespace: ai-chatbot
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: ai.server05.my.id
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: ai-chatbot-service
+            port:
+              number: 80
