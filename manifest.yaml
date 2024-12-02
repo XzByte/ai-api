@@ -47,19 +47,27 @@ spec:
   type: LoadBalancer
 
 ---
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ai-chatbot-ingress
   namespace: ai-chatbot
-  labels:
-    app: ai-chatbot
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  defaultBackend:
+    service:
+      name: ai-chatbot-service
+      port:
+        number: 80
   rules:
   - host: ai.server05.my.id
     http:
       paths:
-      - path: /
+      - path: /*
+        pathType: Prefix
         backend:
-          serviceName: ai-chatbot-service
-          servicePort: 80
+          service:
+            name: ai-chatbot-service
+            port:
+              number: 80
