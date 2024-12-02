@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: ai-chatbot
-        image: your-docker-image:latest
+        image: us-central1-docker.pkg.dev/humanis-server/test-api/ai-api:latest
         ports:
         - containerPort: 7860
         env:
@@ -54,8 +54,14 @@ metadata:
   name: ai-chatbot-ingress
   namespace: ai-chatbot
   annotations:
+    kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  defaultBackend:
+    service:
+      name: ai-chatbot-service
+      port:
+        number: 80
   rules:
   - host: ai.server05.my.id
     http:
